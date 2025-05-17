@@ -7,7 +7,9 @@ function Planeta ({ nombre }) {
     return () => {
       console.log(`¡El planeta ${nombre} ha desaparecido!`) // Desmontaje
     }
-  }, [])
+  }, [nombre])
 
   return <div>{nombre}</div>
 }
+
+export default Planeta

@@ -1,37 +1,82 @@
-// App.jsx
-import React, { useState, useEffect, useMemo } from 'react'
-import Planeta from './Planeta'
+import React, { useState, useEffect, useRef } from 'react'
 
 function App () {
-  // ... (estado)
+  const [planetas, setPlanetas] = useState(
+    JSON.parse(localStorage.getItem('planetas')) || []
+  )
+  const [nombre, setNombre] = useState('')
+  const [descripcion, setDescripcion] = useState('')
+  const [imagen, setImagen] = useState(null)
+  const inputImagenRef = useRef(null)
 
   useEffect(() => {
-    console.log('¡El panel está listo!') // Montaje
+    localStorage.setItem('planetas', JSON.stringify(planetas))
+  }, [planetas])
 
-    const intervalo = setInterval(() => { // Montaje
-      // ... (simulación de vuelo)
-    }, 1000)
+  const handleSubmit = (e) => {
+    e.preventDefault()
 
-    return () => {
-      clearInterval(intervalo) // Desmontaje
-      console.log('El panel se ha apagado.') // Desmontaje
+    const nuevoPlaneta = {
+      nombre,
+      descripcion,
+      imagen: imagen ? URL.createObjectURL(imagen) : null,
     }
-  }, [])
 
-  useEffect(() => {
-    console.log('¡Combustible actualizado!') // Actualización
-  }, [combustible])
+    setPlanetas([...planetas, nuevoPlaneta])
+    setNombre('')
+    setDescripcion('')
+    setImagen(null)
 
-  const mensajeEstado = useMemo(() => {
-    return `Estado: ${estadoNave}`
-  }, [estadoNave])
+    if (inputImagenRef.current) {
+      inputImagenRef.current.value = '' // Limpiar el input de imagen
+    }
+  }
+
+  const handleDelete = (index) => {
+    const nuevosPlanetas = [...planetas]
+    nuevosPlanetas.splice(index, 1)
+    setPlanetas(nuevosPlanetas)
+  }
 
   return (
     <div>
-      {/* ... (información del panel) */}
-      {planetasVisitados.map((planeta, index) => (
-        <Planeta key={index} nombre={planeta} />
-      ))}
+      <h1>Bitácora de Exploración</h1>
+
+      <form onSubmit={handleSubmit}>
+        <input
+          type='text'
+          placeholder='Nombre del planeta'
+          value={nombre}
+          onChange={(e) => setNombre(e.target.value)}
+          required
+        />
+        <textarea
+          placeholder='Descripción'
+          value={descripcion}
+          onChange={(e) => setDescripcion(e.target.value)}
+          required
+        />
+        <input
+          type='file'
+          onChange={(e) => setImagen(e.target.files[0])}
+          ref={inputImagenRef}
+        />
+        <button type='submit'>Guardar</button>
+      </form>
+
+      <h2>Planetas Registrados</h2>
+      <ul>
+        {planetas.map((planeta, index) => (
+          <li key={index}>
+            <h3>{planeta.nombre}</h3>
+            <p>{planeta.descripcion}</p>
+            {planeta.imagen && <img src={planeta.imagen} alt={planeta.nombre} />}
+            <button onClick={() => handleDelete(index)}>Eliminar</button>
+          </li>
+        ))}
+      </ul>
     </div>
   )
 }
+
+export default App
