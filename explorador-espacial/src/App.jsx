@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
+import './App.css'
 
 function App () {
   const [planetas, setPlanetas] = useState(
-    JSON.parse(localStorage.getItem('planetas')) || []
+    JSON.parse(localStorage.getItem('Planetas')) || []
   )
   const [nombre, setNombre] = useState('')
   const [descripcion, setDescripcion] = useState('')
@@ -10,7 +11,7 @@ function App () {
   const inputImagenRef = useRef(null)
 
   useEffect(() => {
-    localStorage.setItem('planetas', JSON.stringify(planetas))
+    localStorage.setItem('Planetas', JSON.stringify(planetas))
   }, [planetas])
 
   const handleSubmit = (e) => {
@@ -45,7 +46,7 @@ function App () {
       <form onSubmit={handleSubmit}>
         <input
           type='text'
-          placeholder='Nombre del planeta'
+          placeholder='Nombre del Planeta'
           value={nombre}
           onChange={(e) => setNombre(e.target.value)}
           required
